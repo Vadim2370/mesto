@@ -3,7 +3,7 @@
     height: 24px;
     border: 1px solid #FFFFFF;
     box-sizing: border-box;
-    background-color: #000000;
+    background-color: transparent;
     background-image: url(../../../images/edit.svg);
     background-repeat: no-repeat;
     background-position: center;
@@ -20,6 +20,7 @@
     .profile__edit {
         width: 18px;
         height: 18px;
+        background-size: 50%;
         margin-left: 10px;
     }
 }
