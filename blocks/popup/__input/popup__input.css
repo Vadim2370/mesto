@@ -16,6 +16,10 @@
     margin: 0 0 48px;
 }
 
+.popup__input:focus {
+    box-shadow: 0 0 2px 2px #75c0fd;
+}
+
 @media screen and (max-width: 559px) {
     .popup__input {
         width: 238px;

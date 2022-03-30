@@ -1,8 +1,9 @@
-.element__image {
+.element__large {
     width: 100%;
-    height: 282px;
+    max-height: 282px;
     border-radius: 10px 10px 0 0;
-    object-fit: cover;
+    border: none;
+    cursor: pointer;
     margin: 0;
     padding: 0;
 }

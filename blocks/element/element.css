@@ -1,5 +1,6 @@
 .element {
     width: 282px;
+    max-height: 361px;
     object-fit: cover;
     display: block;
     box-sizing: border-box;
