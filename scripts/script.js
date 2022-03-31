@@ -1,10 +1,9 @@
 const popup = document.querySelector('.popup');
+const popups = document.querySelectorAll('.popup');
 const editProfileButton = document.querySelector('.profile__edit');
 const addCardButton = document.querySelector('.profile__add');
 const formProfile = document.querySelector('.popup-profile');
 const formCard = document.querySelector('.popup-card');
-const closeButtonProfile = document.querySelector('.popup__close-profile');
-const closeButtonCard = document.querySelector('.popup__close-card');
 const saveButtonCard = document.querySelector('.popup__submit-card');
 const profileName = document.querySelector('.profile__name');
 const profileActivity = document.querySelector('.profile__activity');
@@ -17,7 +16,6 @@ const cardGrid = document.querySelector('.elements__grid');
 const formImage = document.querySelector('.popup-image');
 const imageLarge = formImage.querySelector('.popup__image');
 const imageName = formImage.querySelector('.popup__image-caption');
-const closeButtonImage = formImage.querySelector('.popup__close-image');
 
 const initialCards = [
     {
@@ -60,10 +58,6 @@ function openProfile() {   //открываем форму профиля кно
     openPopup(formProfile);
 };
 
-function closeProfile() {      //закрываем форму профиля без сохранения
-    closePopup(formProfile);
-};
-
 function saveFormProfile(evt) {    //сохраняем данные из полей формы на страницу и закрываем форму кнопкой Сохранить
     evt.preventDefault();       //отменяем отправку формы и перезагрузку страницы
     profileName.textContent = nameInput.value;
@@ -73,10 +67,6 @@ function saveFormProfile(evt) {    //сохраняем данные из пол
 
 function addCard() {           //открываем форму добавления карточки
     openPopup(formCard);
-};
-
-function closeCard() {         //закрываем форму добавления карточки без сохранения
-    closePopup(formCard);
 };
 
 function createCard(data) {     //подготавливаем карточку
@@ -101,10 +91,6 @@ function createCard(data) {     //подготавливаем карточку
     return cardElement;
 };
 
-function closeImage() {
-    closePopup(formImage);
-};
-
 function renderCard(data) {       //собираем и размещаем карточку на странице
     const cardElement = createCard(data);
     cardContainer.prepend(cardElement);
@@ -121,14 +107,19 @@ function createSubmitCard(evt) {   //сохраняем карточку
     closePopup(formCard);
 };
 
+popups.forEach((popup) => {                          //закрываем попап
+    popup.addEventListener('click', (evt) => {
+        if (evt.target.classList.contains('popup__button-close')) {
+            closePopup(popup);
+        };
+    });
+});
+
 initialCards.reverse().forEach((item) => {    //начальный набор карточек
     renderCard(item);
 });
 
 editProfileButton.addEventListener('click', openProfile);
 addCardButton.addEventListener('click', addCard);
-closeButtonProfile.addEventListener('click', closeProfile);
-closeButtonCard.addEventListener('click', closeCard);
 formProfile.addEventListener('submit', saveFormProfile);
 formCard.addEventListener('submit', createSubmitCard);
-closeButtonImage.addEventListener('click', closeImage);
