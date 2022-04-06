@@ -1,0 +1,13 @@
+.input-activity-error {
+    position: absolute;
+    top: 201px;
+    left: 36px;
+}
+
+@media screen and (max-width: 559px) {
+    .input-activity-error {
+        top: 212px;
+        left: 22px;
+    }
+    
+}
