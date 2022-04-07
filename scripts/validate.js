@@ -76,12 +76,11 @@ const enableValidation = ({ formSelector, ...rest }) => {
 
 //убираем сообщения об ошибках
 
-const resetErrors = (popup) => {
-    popup.querySelectorAll('.popup__input').forEach((inputElement) => {
+const resetErrors = (formElement) => {
+    formElement.querySelectorAll('.popup__input').forEach((inputElement) => {
       inputElement.classList.remove('popup__input_type_error');
     });
-  
-    popup.querySelectorAll('.popup__input-error').forEach((errorElement) => {
+    formElement.querySelectorAll('.popup__input-error').forEach((errorElement) => {
       errorElement.classList.remove('popup__input-error_active');
       errorElement.textContent = '';
     });

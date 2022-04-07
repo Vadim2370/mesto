@@ -1,9 +1,10 @@
-const popup = document.querySelector('.popup');
 const popups = document.querySelectorAll('.popup');
 const editProfileButton = document.querySelector('.profile__edit');
 const addCardButton = document.querySelector('.profile__add');
-const formProfile = document.querySelector('.popup-profile');
-const formCard = document.querySelector('.popup-card');
+const popupProfile = document.querySelector('.popup-profile');
+const popupCard = document.querySelector('.popup-card');
+const formProfile = document.querySelector('.popup__form-profile');
+const formCard = document.querySelector('.popup__form-card');
 const saveButtonCard = formCard.querySelector('.popup__submit-card');
 const profileName = document.querySelector('.profile__name');
 const profileActivity = document.querySelector('.profile__activity');
@@ -64,24 +65,23 @@ function openProfile() {   //открываем форму профиля кно
     nameInput.value = profileName.textContent;    //заполняем поля данными со страницы
     activiteInput.value = profileActivity.textContent;
     resetErrors(formProfile);
-    openPopup(formProfile);
+    openPopup(popupProfile);
 };
 
 function saveFormProfile(evt) {    //сохраняем данные из полей формы на страницу и закрываем форму кнопкой Сохранить
     evt.preventDefault();       //отменяем отправку формы и перезагрузку страницы
     profileName.textContent = nameInput.value;
     profileActivity.textContent = activiteInput.value;
-    closePopup(formProfile);
+    closePopup(popupProfile);
 };
 
 //открываем форму добавления карточки очищаем поля формы отключаем кнопку очищаем ошибки
 
 function addCard() {      
-    cardName.value = '';
-    cardLink.value = '';
+    formCard.reset();
     resetErrors(formCard);
     disableButton(saveButtonCard, 'popup__submit_disabled');
-    openPopup(formCard);
+    openPopup(popupCard);
 };
 
 function createCard(data) {     //подготавливаем карточку
@@ -118,17 +118,8 @@ function createSubmitCard(evt) {   //сохраняем карточку
       link: cardLink.value,
     };
     renderCard(data);
-    //evt.target.reset();   //очистка полей формы 
-    closePopup(formCard);
+    closePopup(popupCard);
 };
-
-popups.forEach((popup) => {                          //закрываем попап
-    popup.addEventListener('click', (evt) => {
-        if (evt.target.classList.contains('popup__button-close')) {
-            closePopup(popup);
-        };
-    });
-});
 
 popups.forEach(element => element.addEventListener('click', function (evt) {   //закрываем попап по оверлею
   if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__button-close')) {
