@@ -12,7 +12,6 @@ export class Card {
           .content
           .querySelector('.element')
           .cloneNode(true);
-        
         return cardElement;
         
     }
@@ -41,6 +40,6 @@ export class Card {
     _setEventListeners() {
         this._element.querySelector('.element__like').addEventListener('click', this._likeCard);
         this._element.querySelector('.element__delete').addEventListener('click', this._deleteCard);
-        this._cardImage.addEventListener('click', () => {this._handleCardClick(this._name, this._link)});
+        this._cardImage.addEventListener('click', () => this._handleCardClick(this._name, this._link));
     }
 }

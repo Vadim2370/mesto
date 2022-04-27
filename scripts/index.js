@@ -14,6 +14,7 @@ const profileActivity = document.querySelector('.profile__activity');
 const nameInput = formProfile.querySelector('.popup__input_type_name');
 const activiteInput = formProfile.querySelector('.popup__input_type_activity');
 const cardContainer = document.querySelector('.elements__grid');
+const templateCard = '.element-template';
 const cardName = formCard.querySelector('.popup__input_type_card-name');
 const cardLink = formCard.querySelector('.popup__input_type_card-link');
 const cardGrid = document.querySelector('.elements__grid');
@@ -66,7 +67,7 @@ function openPopup(popup) {
     document.addEventListener('keydown', closePopupEsc);
 };
 
-//закрытие попап
+//закрытие попап сбрасываем сообщения об ошибках валидации
 
 function closePopup(popup) {           
     popup.classList.remove('popup_opened');
@@ -108,7 +109,7 @@ function saveFormProfile(evt) {
     closePopup(popupProfile);
 };
 
-//открываем форму добавления карточки очищаем поля формы отключаем кнопку очищаем ошибки
+//открываем форму добавления карточки очищаем поля формы отключаем кнопку
 
 function addCard() {      
     formCard.reset();
@@ -128,7 +129,7 @@ function handleCardClick(name, link) {
 //собираем новую карточку
 
 function renderCard(item) {      
-    const cardElement = new Card(item, '.element-template', handleCardClick).createCard();
+    const cardElement = new Card(item, templateCard, handleCardClick).createCard();
     return(cardElement);
 };
 
