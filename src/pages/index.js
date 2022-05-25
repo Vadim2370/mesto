@@ -4,8 +4,10 @@ import Section from "../components/Section.js";
 import Card from "../components/Card.js";
 import FormValidator from "../components/FormValidator.js";
 import PopupWithForm from "../components/PopupWithForm.js";
-import PicturePopup from "../components/PicturePopup.js";
+import PopupWithImage from "../components/PopupWithImage.js";
+import PopupWithConfirmation from "../components/PopupWithConfirmation.js";
 import UserInfo from "../components/UserInfo.js";
+import Api from "../components/Api.js";
 
 import {
   profileButton,
@@ -14,26 +16,43 @@ import {
   popupCard,
   formProfile,
   formCard,
+  formConfirm,
   nameInput,
   activiteInput,
   templateCard,
   formImage,
   selectors,
-  initialCards,
 } from "../utils/constans.js";
+import { ids } from "webpack";
 
-function renderCard(item) {
-  const cardElement = new Card(
-    item,
-    templateCard,
-    handleCardClick
-  ).createCard();
-  return cardElement;
-}
+const api = new Api({
+  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-41",
+  headers: {
+    authorization: "f3c649e7-6f2a-4944-a10d-90e02594a0a0",
+    "Content-type": "application/json",
+  },
+});
+
+Promise.all([api.getProfile(), api.getCards()])
+  .then(([userData, initialCards]) => {
+    userInfo.getUserInfo(userData);
+    userInfo.setUserInfo(userData);
+    const userId = userData._id;
+    cardList.renderItems(initialCards.reverse());
+    console.log(userId);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+const userInfo = new UserInfo({
+  nameSelector: ".profile__name",
+  aboutSelector: ".profile__about",
+  avatarSelector: ".profile__avatar",
+});
 
 const cardList = new Section(
   {
-    items: initialCards.reverse(),
     renderer: (item) => {
       cardList.addItem(renderCard(item));
     },
@@ -41,10 +60,38 @@ const cardList = new Section(
   ".elements__grid"
 );
 
-const picturePopup = new PicturePopup(formImage);
+function renderCard(data, userId) {
+  const cardElement = new Card(
+    data,
+    userId,
+    templateCard,
+    handleCardClick
+  ).createCard();
+  //console.log(data);
+  return cardElement;
+}
+
+// function renderCard(data) {
+//   const cardElement = new Card({
+//     data: data,
+//     userId: userData._id,
+//     handleCardClick,
+//     handlDeliteClick: (id) => {
+//       popupWithConfirmation.submitDelete(() => {
+//         api.deleteCard(id).then(() => {});
+//       });
+//     },
+//   });
+// }
+
+// const popupWithConfirmation = new PopupWithConfirmation(formConfirm);
+
+// popupWithConfirmation.setEventListeners();
+
+const imagePopup = new PopupWithImage(formImage);
 
 function handleCardClick(name, link) {
-  picturePopup.open(name, link);
+  imagePopup.open(name, link);
 }
 
 const cardAdd = new PopupWithForm(popupCard, {
@@ -53,15 +100,10 @@ const cardAdd = new PopupWithForm(popupCard, {
   },
 });
 
-const userInfo = new UserInfo({
-  nameSelector: ".profile__name",
-  activitySelector: ".profile__activity",
-});
-
 const openProfilePopup = () => {
   const userData = userInfo.getUserInfo();
   nameInput.value = userData.name;
-  activiteInput.value = userData.activity;
+  activiteInput.value = userData.about;
   profilePopup.open();
 };
 
@@ -87,7 +129,7 @@ cardButton.addEventListener("click", () => {
   cardAdd.open();
 });
 
-picturePopup.setEventListeners();
+imagePopup.setEventListeners();
 cardAdd.setEventListeners();
 profilePopup.setEventListeners();
-cardList.renderItems();
+// cardList.renderItems();
