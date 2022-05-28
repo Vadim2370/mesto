@@ -23,6 +23,7 @@ export default class Card {
       .querySelector(this._cardSelector)
       .content.querySelector(".element")
       .cloneNode(true);
+
     return cardElement;
   }
 
@@ -35,6 +36,7 @@ export default class Card {
     this._cardImage.src = this._link;
     this._cardImage.alt = this._name;
     this._likeCount = this._element.querySelector(".element__like-count");
+    this._likeButton = this._element.querySelector(".element__like");
     this._likeCount.textContent = this._likes.length;
 
     if (!(this._ownerId === this._userId)) {
@@ -42,9 +44,7 @@ export default class Card {
     }
 
     if (this._likes.find((obj) => this._userId === obj._id)) {
-      this._element
-        .querySelector(".element__like")
-        .classList.add("element__liked");
+      this._likeButton.classList.add("element__liked");
     }
     return this._element;
   }
@@ -55,15 +55,12 @@ export default class Card {
   }
 
   handlCardLike() {
-    const likeButton = this._element.querySelector(".element__like");
-    const likeCount = this._element.querySelector(".element__like-count");
-
-    if (!likeButton.classList.contains("element__liked")) {
+    if (!this._likeButton.classList.contains("element__liked")) {
       this._api
         .addLike(this._id)
         .then((data) => {
-          likeButton.classList.add("element__liked");
-          likeCount.textContent = data.likes.length;
+          this._likeButton.classList.add("element__liked");
+          this._likeCount.textContent = data.likes.length;
         })
         .catch((err) => {
           console.log(err);
@@ -72,8 +69,8 @@ export default class Card {
       this._api
         .deleteLike(this._id)
         .then((data) => {
-          likeButton.classList.remove("element__liked");
-          likeCount.textContent = data.likes.length;
+          this._likeButton.classList.remove("element__liked");
+          this._likeCount.textContent = data.likes.length;
         })
         .catch((err) => {
           console.log(err);
