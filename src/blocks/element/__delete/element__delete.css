@@ -5,6 +5,7 @@
     width: 18px;
     height: 19px;
     border: none;
+    outline: none;
     background-image: url(../../../images/trash.svg);
     background-color: transparent;
     cursor: pointer;

@@ -5,25 +5,30 @@ import Card from "../components/Card.js";
 import FormValidator from "../components/FormValidator.js";
 import PopupWithForm from "../components/PopupWithForm.js";
 import PopupWithImage from "../components/PopupWithImage.js";
-import PopupWithConfirmation from "../components/PopupWithConfirmation.js";
+import PopupWithConfirm from "../components/PopupWithConfirm.js";
 import UserInfo from "../components/UserInfo.js";
 import Api from "../components/Api.js";
 
 import {
   profileButton,
   cardButton,
+  avatarButton,
   popupProfile,
   popupCard,
+  popupAvatar,
+  popupConfirm,
   formProfile,
   formCard,
-  formConfirm,
+  formAvatar,
   nameInput,
   activiteInput,
-  templateCard,
+  cardSelector,
   formImage,
   selectors,
+  nameProfile,
+  aboutProfile,
+  avatarProfile,
 } from "../utils/constans.js";
-import { ids } from "webpack";
 
 const api = new Api({
   baseUrl: "https://mesto.nomoreparties.co/v1/cohort-41",
@@ -33,84 +38,106 @@ const api = new Api({
   },
 });
 
-Promise.all([api.getProfile(), api.getCards()])
-  .then(([userData, initialCards]) => {
-    userInfo.getUserInfo(userData);
+let userId;
+
+api
+  .getData()
+  .then(([initialCards, userData]) => {
+    userId = userData._id;
     userInfo.setUserInfo(userData);
-    const userId = userData._id;
-    cardList.renderItems(initialCards.reverse());
-    console.log(userId);
+    cardList.renderItems(initialCards);
   })
   .catch((err) => {
     console.log(err);
   });
 
 const userInfo = new UserInfo({
-  nameSelector: ".profile__name",
-  aboutSelector: ".profile__about",
-  avatarSelector: ".profile__avatar",
+  nameSelector: nameProfile,
+  aboutSelector: aboutProfile,
+  avatarSelector: avatarProfile,
 });
+
+function renderCard(data) {
+  const card = new Card(
+    {
+      data: data,
+      handleCardClick: () => popupWithImage.open(data),
+      handleLikeClick: () => card.handlCardLike(),
+      handleDeleteClick: () => {
+        popupWithConfirm.submitHandle(() => {
+          popupWithConfirm.renederLoadDelete(true);
+          api
+            .removeCard(data._id)
+            .then(() => {
+              card.deleteCard();
+              popupWithConfirm.close();
+            })
+            .catch((err) => console.log(err))
+            .finally(() => popupWithConfirm.renederLoadDelete(false));
+        });
+        popupWithConfirm.open();
+      },
+    },
+    cardSelector,
+    api,
+    userId
+  );
+  return card;
+}
 
 const cardList = new Section(
   {
     renderer: (item) => {
-      cardList.addItem(renderCard(item));
+      const card = renderCard(item);
+      const cardElement = card.createCard();
+      cardList.addItem(cardElement);
     },
   },
   ".elements__grid"
 );
 
-function renderCard(data, userId) {
-  const cardElement = new Card(
-    data,
-    userId,
-    templateCard,
-    handleCardClick
-  ).createCard();
-  //console.log(data);
-  return cardElement;
-}
-
-// function renderCard(data) {
-//   const cardElement = new Card({
-//     data: data,
-//     userId: userData._id,
-//     handleCardClick,
-//     handlDeliteClick: (id) => {
-//       popupWithConfirmation.submitDelete(() => {
-//         api.deleteCard(id).then(() => {});
-//       });
-//     },
-//   });
-// }
-
-// const popupWithConfirmation = new PopupWithConfirmation(formConfirm);
-
-// popupWithConfirmation.setEventListeners();
-
-const imagePopup = new PopupWithImage(formImage);
-
-function handleCardClick(name, link) {
-  imagePopup.open(name, link);
-}
-
-const cardAdd = new PopupWithForm(popupCard, {
-  handleFormSubmit: (item) => {
-    cardList.addItem(renderCard(item));
-  },
+const cardEdit = new PopupWithForm(popupCard, (values) => {
+  cardEdit.renederLoad(true);
+  api
+    .addCard(values)
+    .then((data) => {
+      const card = renderCard(data);
+      cardList.addItem(card.createCard());
+      cardEdit.close();
+    })
+    .catch((err) => console.log(err))
+    .finally(() => cardEdit.renederLoad(false));
 });
 
-const openProfilePopup = () => {
+const openProfileEdit = () => {
   const userData = userInfo.getUserInfo();
   nameInput.value = userData.name;
   activiteInput.value = userData.about;
-  profilePopup.open();
+  profileEdit.open();
 };
 
-const profilePopup = new PopupWithForm(popupProfile, {
-  handleFormSubmit: (userData) => {
-    userInfo.setUserInfo(userData);
-  },
+const profileEdit = new PopupWithForm(popupProfile, (values) => {
+  profileEdit.renederLoad(true);
+  api
+    .editProfile(values)
+    .then((data) => {
+      userInfo.setUserInfo(data);
+      profileEdit.close();
+    })
+    .catch((err) => console.log(err))
+    .finally(() => profileEdit.renederLoad(false));
+});
+
+const avatarEdit = new PopupWithForm(popupAvatar, (values) => {
+  avatarEdit.renederLoad(true);
+  api
+    .editAvatar(values)
+    .then((data) => {
+      userInfo.setUserInfo(data);
+      avatarEdit.close();
+    })
+    .catch((err) => console.log(err))
+    .finally(() => avatarEdit.renederLoad(false));
 });
 
 const profileValidator = new FormValidator(selectors, formProfile);
@@ -118,7 +145,7 @@ profileValidator.enableValidation();
 
 profileButton.addEventListener("click", () => {
   profileValidator.resetValidation();
-  openProfilePopup();
+  openProfileEdit();
 });
 
 const cardValidator = new FormValidator(selectors, formCard);
@@ -126,10 +153,23 @@ cardValidator.enableValidation();
 
 cardButton.addEventListener("click", () => {
   cardValidator.resetValidation();
-  cardAdd.open();
+  cardEdit.open();
 });
 
-imagePopup.setEventListeners();
-cardAdd.setEventListeners();
-profilePopup.setEventListeners();
-// cardList.renderItems();
+const avatarValidator = new FormValidator(selectors, formAvatar);
+avatarValidator.enableValidation();
+
+avatarButton.addEventListener("click", () => {
+  avatarValidator.resetValidation();
+  avatarEdit.open();
+});
+
+const popupWithImage = new PopupWithImage(formImage);
+
+const popupWithConfirm = new PopupWithConfirm(popupConfirm);
+
+popupWithConfirm.setEventListeners();
+popupWithImage.setEventListeners();
+cardEdit.setEventListeners();
+profileEdit.setEventListeners();
+avatarEdit.setEventListeners();

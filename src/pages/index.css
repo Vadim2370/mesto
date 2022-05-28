@@ -46,6 +46,7 @@
 @import url(../blocks/popup/__input-error/_active/input-about-error.css);
 @import url(../blocks/popup/__input-error/_active/input-card-error.css);
 @import url(../blocks/popup/__input-error/_active/input-link-error.css);
+@import url(../blocks/popup/__input-error/_active/input-avatar-error.css);
 @import url(../blocks/popup/__submit/popup__submit.css);
 @import url(../blocks/popup/__submit/_disabled/popup__submit_disabled.css);
 @import url(../blocks/popup/__close/popup__close.css);
